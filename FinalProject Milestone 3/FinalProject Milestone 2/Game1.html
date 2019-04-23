@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        Rush
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css">
+</head>
+<body style="background-image: Url('media/BlackBackground.jpg'); background-repeat: repeat;"> 
+    <header>
+            <h1 style="text-align:center;"><a href = "home.html">Final Project Games</a></h1>
+        <hr><br>
+    </header>
+    <div class="middle">
+            <a href = "home.html" class="btn btn4">Home</a>
+            <a href = "Game1.html" class="btn btn4">Rush</a>
+            <a href = "Game2.html" class="btn btn4">Order</a>
+            <a href = "Game3.html" class="btn btn4">Dash</a>
+            <a href = "Citations.html" class="btn btn4">Citations</a>
+        </div>
+        <br><br>
+        <div>
+                <div class="column">  <p></p> </div>
+               <div class="column"> 
+                <p style="float:right; text-align:center; margin:auto;width: 200px;  overflow: auto; color:white; font-weight: bold;"><u style="font-size: 2em;">KeyBinds</u><br>Welcome to Rush! Use the following keys to play. Move up key: W or UP ARROW Move down key: S or DOWN ARROW Move right key: D or RIGHT ARROW Move left key: A or LEFT ARROW Enjoy the game!</p>
+               <p style="float:left; text-align:center; margin:auto;width: 200px; overflow: auto; color:white; font-weight: bold;"><u style="font-size:2em;">Information </u>What is and how do I play Rush? Rush is a time-based coin collecting game. Collect as many coins as you can before the time runs out. The more coins you collect, the more points you get.
+                    <br>Have fun! </p>   <br>
+                    <canvas id="myCanvas" width="500" height="400" style="float: left;padding-left: 0;padding-right: 0;margin-left: auto;margin-right: auto;display: block;  border:3px solid darkgray; border-radius: 4px;">Your browser doesn't support the HTML5 tag "Canvas".</canvas>  
+                   <br>
+            </div>
+                <div class="column"> </div>
+              </div>
+       <script>
+           /*
+    
+            This game is intended for all audiences, mainly for people who are looking to kill time.
+
+           */
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext('2d');
+            var gameStarted = false;
+            var gameOverVal = false;
+            var playersPoints = 0;
+            var playerRadius = 15; 
+            var timerCount = 30;
+            var px = canvas.width/2;
+            var py = canvas.height/2;
+            var img = new Image();
+            var pinc = 4;
+            var keys = [];
+            var coinObjects = [];
+            
+           // window.addEventListener('keydown',this.movePlayer,false);
+            
+            function welcomeScreen(){
+                ctx.font = "25px Cambria";
+                ctx.fillStyle = "#0984e3";
+                ctx.fillText("Welcome to Rush, move to begin.",canvas.width-canvas.width+75,canvas.height/2);
+            }
+            //
+            // Display the "welcome to rush, move to start game" screen
+            //
+            welcomeScreen(); 
+
+            //
+            // Start Game
+            // - sets gameStarted variable to true, starts game timer count down, clears canvas, and draws player
+            //
+            function startGame(){
+                gameStarted = true;
+                gameTimer();    
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                ctx.beginPath();
+                drawPlayer();
+            }
+            //
+            // Function for drwaing player
+            //
+            function drawPlayer(){
+            ctx.beginPath();
+            ctx.arc(px,py,playerRadius,0,Math.PI*2);
+            ctx.fillStyle = "#55efc4";
+            ctx.fill();
+            ctx.font = "12px Cambria";
+            ctx.fillStyle = "#00b894";
+            ctx.fillText("YOU", px-11,py+3);
+            } 
+            //
+            // Clear canvas Function
+            // - If game has started it does the following
+            // - Clears canvas, starts coin loop (Checking if the player has collected coin and acts on it), keeps player drawn
+            // - Draws the timer to the screen
+            // If the game isn't started then it shows the welcome screen/Runs welcomeScreen Function
+            //
+            function clearCanvas(){
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                if(gameStarted == true){
+                coinLoop();
+                drawPlayer();
+                var timerDesc = timerCount + ' seconds remaining';
+                ctx.font = "12px Cambria";
+                ctx.fillStyle = "#FFD700"; 
+                ctx.fillText("Time Left: " + timerDesc, canvas.width-canvas.width+150,canvas.height-canvas.height + 30); 
+                }else{
+                    welcomeScreen();
+                }
+            }
+
+            //
+            // Randomly spawning coins onto the screen, and puts them into an array
+            //
+            var coinsSpawned = 0;
+
+            function coin(points, rad){  
+            if(coinsSpawned < 10){
+            var xmin=1; 
+            var xmax=canvas.width;  
+            var randomX =Math.floor(Math.random() * (+xmax - +xmin)) + +xmin; 
+            var ymin=1; 
+            var ymax=canvas.height;  
+            var randomY =Math.floor(Math.random() * (+ymax - +ymin)) + +ymin;
+            var coinX = randomX;
+            var coinY = randomY;
+            console.log("Random X: " + randomX + ", Random Y: " + randomY);
+            var coins = {
+            coinx:coinX, coiny:coinY, possiblePoints:points, radius:rad, collected:false, drawCoin:function(){
+            
+            ctx.beginPath();
+            ctx.arc(coinX,coinY,rad,0,Math.PI*2);
+            ctx.fillStyle = "#F0E68C";
+            ctx.fill();
+            ctx.font = "12px Cambria";
+            ctx.fillStyle = "#DAA520";
+             
+            ctx.fillText(coins.possiblePoints, coins.coinx-3, coins.coiny+3);  
+            //
+            // Function created for getting the distance from player to the coin itself
+            // This function uses Pythagorean theorem (Cited in sources page)
+            //
+            }, getDistance:function(x1,y1,x2,y2){
+                var xDistance = x2-x1;
+                var yDistance = y2-y1;
+                return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance,2));
+            }
+          
+            } 
+            //
+            // Increments the coinsSpawned
+            // Adds coins to array
+            //
+            coinsSpawned += 1;
+            console.log(coinsSpawned);
+            coinObjects.push(coins);
+             
+            console.log(coins.coinx + " " + coins.coiny);
+            console.log(coinObjects);
+            console.log();
+            }
+            }
+            //
+            // checkPlayerBounds Function checks if the player has passed any canvas boundries, if they have then push
+            // them back without jittering
+            //
+           function checkPlayerBounds(){
+             if(px > canvas.width-playerRadius+2){
+                px-=pinc;
+                console.log("MORE THAN CANVAS");
+             }
+             if(px < canvas.width-canvas.width + playerRadius -1){
+                px+=pinc;
+                console.log("LESS THAN CANVAS");
+             }
+             if(py > canvas.height-playerRadius+2){
+                py-=pinc;
+                console.log("TALLER THAN CANVAS");
+             }
+             if(py < canvas.height-canvas.height+playerRadius){
+                py+=pinc;
+                console.log("SHORTER THAN CANVAS");
+             }
+           }  
+            //
+            // Keeping track of the player's score / How much coins they have collected
+            //
+            function playerScoreDisplay(){ 
+            ctx.font = "12px Cambria";
+            ctx.fillStyle = "#FFD700";
+             
+            ctx.fillText("POINTS: " + playersPoints, canvas.width-150,canvas.height-canvas.height + 30);  
+    
+            }
+            //
+            // Game over screen for when timer ends
+            //
+            function gameOver(){
+                gameOverVal = true; 
+                clearTimeout(canvasLoop);
+                ctx.clearRect(0,0,canvas.width, canvas.height); 
+                ctx.font = "20px Cambria";
+                ctx.fillStyle = "#FFD700";
+                ctx.fillText("Game over! Press F5 to play again!", canvas.width-canvas.width+75, canvas.height/2);
+                ctx.fillText("Your Points: " + playersPoints + "!", canvas.width-canvas.width+175, canvas.height/2+25);
+            }
+            //
+            // Creating and showing the timer on the screen
+            //
+            if(gameOverVal == false){
+            var canvasLoop = setInterval(clearCanvas, 0);
+            } 
+            function gameTimer(){ 
+                var timerId = setInterval(countdown, 1000);
+
+                function countdown() {
+                    if (timerCount == 0) {
+                        clearTimeout(timerId);
+                        gameOver();
+                    } else { 
+                        timerCount--; 
+                        console.log(timerCount); 
+                    }
+                }
+            }
+
+            //
+            // The coinLoop Function checks whether the current coin in the list is already collected, if not
+            // then it draws the coin to the screen (This is after the screen has been cleared, so no extra coins that were already collected are drawn)
+            // All of the non-collected coins distances from the player are checked, if the player is on top of the coin, then it's set
+            // to collected, coinsSpawned is decremented and the player's points is incremented by the following coin's set points
+            //
+            function coinLoop(){
+                for(var i = 0; i < coinObjects.length; i++){
+                if(coinObjects[i].collected == false){
+                    coinObjects[i].drawCoin();
+                    if(coinObjects[i].getDistance(coinObjects[i].coinx, coinObjects[i].coiny, px,py) < coinObjects[i].radius + playerRadius){
+                        coinObjects[i].collected = true;
+                        coinsSpawned -= 1;
+                        playersPoints+=coinObjects[i].possiblePoints;
+                    }
+                }
+           }
+            }
+            //
+            // Player movement detection method and coin spawning check
+            // If the coins are less than 6, check the time and following conditions and spawn coins accordingly
+            // Display the user's score to the screen everytime they move
+            // Check which keys are being pressed then move the direction for the corresponding key
+            // Functions ran when player is moved: checkPlayerBounds(), coinLoop(), playerScoreDisplay(), and startGame() if the game hasn't been started already
+            //
+            function movePlayer(){ 
+            if(gameOverVal == false){
+                window.requestAnimationFrame(movePlayer);
+                if(coinsSpawned < 10 && gameStarted == false){
+                    coin(5,10);
+                }
+                if(gameStarted == true && coinsSpawned < 6 && timerCount < 30 && timerCount > 25){
+                    coin(5,10);
+                }
+                if(gameStarted == true && coinsSpawned < 6 && timerCount < 25 && timerCount > 15){
+                    coin(8,15);
+                }
+                if(gameStarted == true && coinsSpawned < 6 && timerCount < 15 && timerCount > 7){
+                    coin(12,17);
+                }
+                if(gameStarted == true && coinsSpawned < 6 && timerCount < 7 && timerCount > 2){
+                    coin(15,20);
+                }
+                if(gameStarted == true && coinsSpawned < 6 && timerCount < 2 && timerCount > 0){
+                    coin(35,25);
+                }
+                playerScoreDisplay();
+
+                if(keys[37] || keys[65])
+                {
+                    if(gameStarted == false){
+                        startGame();
+                        px -= pinc;
+                        checkPlayerBounds();
+                        
+                        coinLoop();
+                        playerScoreDisplay(); 
+
+                    }
+                    else{
+                        px -= pinc;
+                        checkPlayerBounds();
+                        
+                        coinLoop(); 
+                        playerScoreDisplay(); 
+
+                    }
+                } 
+                if(keys[38] || keys[87])
+                {
+                    if(gameStarted == false){
+                        startGame();
+                        py -= pinc; 
+
+                        checkPlayerBounds();
+                        
+                        coinLoop();
+                        playerScoreDisplay();
+
+                    }
+                    else{
+                        py -= pinc;
+                        checkPlayerBounds();
+                        
+                        coinLoop(); 
+                        playerScoreDisplay(); 
+
+                    }
+                } 
+                if(keys[39] || keys[68])
+                {
+                    if(gameStarted == false){
+                        startGame();
+                        px += pinc; 
+
+                        checkPlayerBounds();
+                        coinLoop();
+                        playerScoreDisplay();
+
+                    }
+                    else{
+                        px += pinc; 
+                        checkPlayerBounds();
+                        
+                        coinLoop(); 
+                        playerScoreDisplay(); 
+
+                    }
+                } 
+                if(keys[40] || keys[83])
+                {
+                    if(gameStarted == false){
+                        startGame();
+                        py += pinc;
+                        checkPlayerBounds();
+ 
+                        coinLoop();
+                        playerScoreDisplay(); 
+
+                    }
+                    else{
+                        py += pinc;
+                        checkPlayerBounds();
+
+                        
+                        coinLoop();
+                        playerScoreDisplay(); 
+
+                    }
+                } 
+            }
+            } 
+           
+            movePlayer();
+            //
+            // Get the inputed key pressed and released, and add them to the keys array
+            //
+            document.body.addEventListener("keydown", function (e) {
+                keys[e.keyCode] = true;
+            });
+            document.body.addEventListener("keyup", function (e) {
+                keys[e.keyCode] = false;
+            });
+        /*
+        Rush is a game where you have to collect as many coins as you can within a minute, without getting touched by lightning 
+        bolts that fly across the map.
+        */
+        </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script src="https://code.jquery.com/jquery-latest.js"></script>
+   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <style>
+      #MoveMe1, #MoveMe2, #MoveMe3, #MoveMe4, #MoveMe5, #MoveMe6 
+      { 
+         width: 200px;
+         height: 100px;
+         height: 5em;
+         text-align: center; 
+      }
+      section{
+		 display:flex;
+ 		 flex-wrap:wrap;
+		}
+	p{
+		flex:1;
+		width:200px;
+	}
+
+   </style>
+   <script>
+      $(function()
+        {
+            $("#MoveMe1").draggable();
+            $("#MoveMe2").draggable();
+            $("#MoveMe3").draggable();
+            $("#MoveMe4").draggable();
+            $("#MoveMe5").draggable();
+            $("#MoveMe6").draggable();
+        });
+   </script>
+   <title>Draggable Numbers</title>
+</head>
+
+<body>
+   <h1>Organize the numbers!</h1>
+   <section>
+	   <p id="MoveMe1"><img src = "media/1.png"/></p>
+	   <p id="MoveMe2"><img src="media/2.png"/></p>
+	   <p id="MoveMe3"><img src="media/3.png"/></p>
+	   <p id="MoveMe4"><img src="media/4.png"/></p>
+       <p id="MoveMe5"><img src="media/5.png"/></p>  
+   </section>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        Rush
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css">
+</head>
+<body style="background-image: Url('media/BlackBackground.jpg'); background-repeat: repeat;" onload="startGame()"> 
+    <header>
+            <h1 style="text-align:center;"><a href = "home.html">Final Project Games</a></h1>
+        <hr><br>
+    </header>
+    <div class="middle">
+            <a href = "home.html" class="btn btn4">Home</a>
+            <a href = "Game1.html" class="btn btn4">Rush</a>
+            <a href = "Game2.html" class="btn btn4">Order</a>
+            <a href = "Game3.html" class="btn btn4">Dash</a>
+            <a href = "Citations.html" class="btn btn4">Citations</a>
+        </div>
+        <br><br>
+        <div>
+                <div class="column">  <p></p> </div>
+               <div class="column"> 
+                <p style="float:right; text-align:center; margin:auto;width: 200px;  overflow: auto; color:white; font-weight: bold;"><u style="font-size: 2em;">KeyBinds</u><br>Welcome to Dash! Use the following keys to play. Move up key: W or UP ARROW Move down key: S or DOWN ARROW Move right key: D or RIGHT ARROW Move left key: A or LEFT ARROW Enjoy the game!</p>
+               <p style="float:left; text-align:center; margin:auto;width: 200px; overflow: auto; color:white; font-weight: bold;"><u style="font-size:2em;">Information </u> How do I play Dash? To win in the game of Dash, you must make it past the green line. If the player touches any moving obstacles, they will lose. Enjoy!
+                    <br>Have fun! </p>   <br>
+                    <div id="myCanvas"></div>
+                    <script>
+                    
+                            var myGamePiece;
+                            var myObstacles = [];
+                            var keys = [];
+                            var finishLineList = [];
+                            var myScore;
+                            var px = 10;
+                            var py = 120;
+                            
+                            function startGame() {
+                                myGamePiece = new component(40, 40, "green", px, py);
+                                myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+                                myGameArea.start();
+                            }
+                            var myGameArea = {
+                                canvas : document.createElement("canvas"),
+                                start : function() {
+                           document.getElementById('myCanvas').appendChild(myGameArea.canvas);
+                                    this.canvas.width = 525;
+                                    this.canvas.height = 525;
+                                    this.canvas.style.border = "2px solid white";
+                                    this.context = this.canvas.getContext("2d");
+                                   // document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                                    this.frameNo = 0;
+                                    this.interval = setInterval(updateGameArea, 20);
+                                    },
+                                clear : function() {
+                                    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                                },
+                                stop : function() {
+                                    clearInterval(this.interval);
+                                }
+                            }
+                            
+                            function component(width, height, color, x, y, type) {
+                                this.type = type;
+                                this.width = width;
+                                this.height = height; 
+                                this.speedX = 2; 
+                                this.speedY = 1;    
+                                this.x = x;
+                                this.y = y;    
+                                this.update = function() {
+                                    ctx = myGameArea.context;
+                                    if (this.type == "text") {
+                                        ctx.font = this.width + " " + this.height;
+                                        ctx.fillStyle = color;
+                                        ctx.fillText(this.text, this.x, this.y);
+                                    } else {
+                                        ctx.fillStyle = color;
+                                        ctx.fillRect(this.x, this.y, this.width, this.height);
+                                    }
+                                }
+                                this.newPos = function() {
+                                    this.x += this.speedX;
+                                    this.y += this.speedY;        
+                                }
+                                this.crashWith = function(otherobj) {
+                                    var myleft = this.x;
+                                    var myright = this.x + (this.width);
+                                    var mytop = this.y;
+                                    var mybottom = this.y + (this.height);
+                                    var otherleft = otherobj.x;
+                                    var otherright = otherobj.x + (otherobj.width);
+                                    var othertop = otherobj.y;
+                                    var otherbottom = otherobj.y + (otherobj.height);
+                                    var crash = true;
+                                    if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+                                        crash = false;
+                                    }
+                                    return crash;
+                                }
+                            }
+                            function updateGameArea() {
+                                var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+                                for (i = 0; i < myObstacles.length; i += 1) {
+                                    if (myGamePiece.crashWith(myObstacles[i])) {
+                                        myGameArea.canvas.getContext('2d').font = "20px Cambria";
+                                        myGameArea.canvas.getContext('2d').fillStyle = "#FF0000";
+                                        myGameArea.canvas.getContext('2d').fillText("You Lost! Press F5 to play again!", myGameArea.canvas.width-myGameArea.canvas.width+75, myGameArea.canvas.height/2); 
+                                    
+                                        myGameArea.stop();
+                                        return;
+                                    } 
+                                }
+                             
+                                myGameArea.clear();
+                                myGameArea.frameNo += 1;
+                                if (myGameArea.frameNo == 1 || everyinterval(150)) {
+                                    x = myGameArea.canvas.width - 50;
+                                    minHeight = 20;
+                                    maxHeight = 200;
+                                    height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+                                    minGap = 75;
+                                    maxGap = 200;
+                                    gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+                                    myObstacles.push(new component(35, height, "blue", x, 0));
+                                    myObstacles.push(new component(35, x - height - gap, "blue", x, height + gap)); 
+                                }
+                                for (i = 0; i < myObstacles.length; i += 1) {
+                                    myObstacles[i].speedX = -1;
+                                    myObstacles[i].newPos();
+                                    myObstacles[i].update();
+                                }
+                                myScore.text="SCORE: " + myGameArea.frameNo;
+                                myScore.update();
+                                myGamePiece.newPos();    
+                                myGamePiece.update();
+                            }
+                            
+                            function everyinterval(n) {
+                                if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+                                return false;
+                            }
+                            
+                            function moveup() {
+                                myGamePiece.y -=1; 
+                                 
+                            }
+                            
+                            function movedown() {
+                                myGamePiece.y += 1; 
+                            }
+                            
+                            function moveleft() {
+                                myGamePiece.x -=1; 
+                            }
+                            
+                            function moveright() {
+                                myGamePiece.x += 1; 
+                             if(myGamePiece.x >= myGameArea.canvas.width-20){
+                                myGameArea.stop();
+                                console.log("You won!"); 
+                                myGameArea.canvas.getContext('2d').font = "20px Cambria";
+                                myGameArea.canvas.getContext('2d').fillStyle = "#FFD700";
+                                myGameArea.canvas.getContext('2d').fillText("You Won! Press F5 to play again!", myGameArea.canvas.width-myGameArea.canvas.width+75, myGameArea.canvas.height/2); 
+                             }
+                            }
+                            
+                            function clearmove() {
+                                myGamePiece.speedX = 0; 
+                                myGamePiece.speedY = 0; 
+                            }
+                            drawFinishLine(px, myGameArea.canvas.width-23, py, myGameArea.canvas.height-myGameArea.canvas.height);
+                            function checkDistances(){
+                                for(var c = 0; c < finishLineList.length; c++){
+                                    if(coinObjects[i].getDistance(coinObjects[i].coinx, coinObjects[i].coiny, px,py) < coinObjects[i].radius + playerRadius){
+                                                    coinObjects[i].collected = true;
+                                                    coinsSpawned -= 1;
+                                                    playersPoints+=coinObjects[i].possiblePoints;
+                                                }
+                                }
+                            }
+                            
+                            function drawFinishLine(x1,x2,y1,y2){
+                            var finishLine={
+                                drawFL:function(){ 
+                                myGameArea.canvas.getContext('2d').fillRect(myGameArea.canvas.width-23, myGameArea.canvas.height-myGameArea.canvas.height, 50, myGameArea.canvas.height);
+                                myGameArea.canvas.getContext('2d').strokeStyle = "#00FFFFF";
+                                myGameArea.canvas.getContext('2d').stroke();
+                                }, getDistance:function(x1,y1,x2,y2){
+                                            var xDistance = x2-x1;
+                                            var yDistance = y2-y1;
+                                            return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance,2));
+                            }}
+                                finishLineList.push(finishLine);
+                            
+                            }
+                            drawline();
+                            function drawline(){
+                                window.requestAnimationFrame(drawline);
+                                for(var c = 0; c < finishLineList.length; c++){
+                                    finishLineList[c].drawFL();
+                                }
+                            }
+                            function movePlayer(){ 
+                                       
+                                            window.requestAnimationFrame(movePlayer);
+                                       
+                                             
+                                            if(keys[37] || keys[65])
+                                            {
+                                           
+                                               
+                                                   moveleft();
+                                                   clearmove(); 
+                                              //      checkPlayerBounds();
+                                                    
+                                               //     coinLoop(); 
+                                                //    playerScoreDisplay(); 
+                             
+                                            } 
+                                            if(keys[38] || keys[87])
+                                            {
+                                             
+                                                   // startGame();
+                                                   moveup();
+                                                   clearmove();
+                            
+                                                   // checkPlayerBounds();
+                                                    
+                                                  //  coinLoop();
+                                                  //  playerScoreDisplay();
+                              
+                             
+                                            } 
+                                            if(keys[39] || keys[68])
+                                            {
+                                           
+                                            
+                                                    moveright();
+                                                    clearmove();
+                            
+                                              //      checkPlayerBounds();
+                                                    
+                                                 //   coinLoop(); 
+                                                  //  playerScoreDisplay(); 
+                             
+                                            } 
+                                            if(keys[40] || keys[83])
+                                            {
+                                              
+                                                    movedown(); 
+                                                    clearmove();
+                            
+                                               //     checkPlayerBounds();
+                            
+                                                    
+                                                  //  coinLoop();
+                                                   // playerScoreDisplay(); 
+                             
+                                            } 
+                                        }  
+                                       
+                                        movePlayer();
+                                        //
+                                        // Get the inputed key pressed and released, and add them to the keys array
+                                        //
+                                        document.body.addEventListener("keydown", function (e) {
+                                            keys[e.keyCode] = true;
+                                        });
+                                        document.body.addEventListener("keyup", function (e) {
+                                            keys[e.keyCode] = false;
+                                        });
+                            </script><br>
+            </div>
+                <div class="column"> </div>
+              </div> 
+                    
+</body>
+</html>

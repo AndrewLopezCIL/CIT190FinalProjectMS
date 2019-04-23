@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://code.jquery.com/jquery-latest.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> 
+        <style>
+           #MoveMe1, #MoveMe2, #MoveMe3, #MoveMe4, #MoveMe5, #MoveMe6 
+           { 
+              width: 200px;
+              height: 100px;
+              height: 5em;
+              text-align: center; 
+           }
+           section{
+              display:flex;
+               flex-wrap:wrap;
+             }
+         p{
+             flex:1;
+             width:200px;
+         }
+     
+        </style>
+        <script>
+           $(function()
+             {
+                 $("#MoveMe1").draggable();
+                 $("#MoveMe2").draggable();
+                 $("#MoveMe3").draggable();
+                 $("#MoveMe4").draggable();
+                 $("#MoveMe5").draggable();
+                 $("#MoveMe6").draggable();
+             });
+        </script>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css">
+</head>
+<body style="background-image: Url('media/BlackBackground.jpg'); background-repeat: repeat;"> 
+    <header>
+            <h1 style="text-align:center;"><a href = "home.html">Final Project Games</a></h1>
+        <hr><br>
+    </header>
+    <div class="middle">
+            <a href = "home.html" class="btn btn4">Home</a>
+            <a href = "Game1.html" class="btn btn4">Rush</a>
+            <a href = "Game2.html" class="btn btn4">Order</a>
+            <a href = "Game3.html" class="btn btn4">Dash</a>
+            <a href = "Citations.html" class="btn btn4">Citations</a>
+        </div>
+        <br><br>
+        <div>
+                <div class="column">  <p></p> </div>
+               <div class="column"> 
+                <p style="float:right; text-align:center; margin:auto;width: 200px;  overflow: auto; color:white; font-weight: bold;"><u style="font-size: 2em;">KeyBinds</u><br>Hold down the left mouse button over a picture to grab, and let go to drop! </p>
+               <p style="float:left; text-align:center; margin:auto;width: 200px; overflow: auto; color:white; font-weight: bold;"><u style="font-size:2em;">Information </u>How to play Order? Rearrange the numbers so they are in order!
+                    <br>Have fun! </p>   <br>
+                    <div id="countingDiv"></div>
+                  
+                    <br>
+            </div>
+                <div class="column"> </div>
+              </div>
+              <script src="https://code.jquery.com/jquery-latest.js"></script>
+              <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     
+        <section style="display:block;">
+	   <p id="MoveMe1"><img src = "media/number-1_1.jpg"/></p><br>
+	   <p id="MoveMe4"><img src="media/number-4_1.jpg"/></p><br>
+	   <p id="MoveMe2"><img src="media/number-2_1.jpg"/></p><br>
+	   <p id="MoveMe3"><img src="media/number-3_4.jpg"/></p><br>
+       <p id="MoveMe5"><img src="media/number-5_2.jpg"/></p><br>
+   </section>
+        
+</body>
+</html>
